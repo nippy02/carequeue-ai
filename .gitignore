@@ -1,0 +1,18 @@
+# dependencies 
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+#builds
+frontend/dist/
+frontend/build/
+backend/dist/
+# env
+.env
+backend/.env
+frontend/.env
+# database
+backend/data/*.db
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
