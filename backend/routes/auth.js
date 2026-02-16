@@ -10,8 +10,10 @@ const Staff = require('../models/Staff');
 // Admin login
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    
+    const body = req.body || {};
+    const username = typeof body.username === 'string' ? body.username.trim() : '';
+    const password = typeof body.password === 'string' ? body.password : '';
+
     if (!username || !password) {
       return res.status(400).json({
         success: false,
