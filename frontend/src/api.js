@@ -2,7 +2,9 @@
  * CareQueue AI - API Client
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+// Dev: use /api (Vite proxy to localhost:5000). Prod: use Render backend if VITE_API_URL not set.
+const API_BASE = import.meta.env.VITE_API_URL
+  || (import.meta.env.PROD ? 'https://carequeue-ai.onrender.com/api' : '/api');
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
