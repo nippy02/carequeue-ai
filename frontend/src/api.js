@@ -16,10 +16,24 @@ async function request(endpoint, options = {}) {
   if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
     config.body = JSON.stringify(options.body);
   }
-  const res = await fetch(url, config);
-  const data = await res.json().catch(() => ({}));
+  let res;
+  try {
+    res = await fetch(url, config);
+  } catch (err) {
+    const msg = err.message || 'Network error';
+    if (msg.toLowerCase().includes('failed to fetch') || msg.toLowerCase().includes('network')) {
+      throw new Error('Cannot reach server. If using Render free tier, the server may be waking up—try again in 30 seconds.');
+    }
+    throw new Error(msg);
+  }
+  const text = await res.text();
+  const data = text ? (() => { try { return JSON.parse(text); } catch { return {}; } })() : {};
   if (!res.ok) {
-    throw new Error(data.message || 'Request failed');
+    const msg = data.message || data.error || `Request failed (${res.status})`;
+    if (res.status === 502 || res.status === 503) {
+      throw new Error('Server is starting up (Render free tier). Please try again in 30 seconds.');
+    }
+    throw new Error(msg);
   }
   return data;
 }
